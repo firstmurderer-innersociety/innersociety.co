@@ -1,28 +1,34 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inner Society Kazanç Tablosu</title>
-  <!-- Popüler Poppins fontu için Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <!-- İkonlar için Font Awesome kütüphanesi -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Birleştirilmiş İçerik</title>
   <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to bottom, #f0f4f8, #ffffff);
-      padding: 30px 20px;
-      max-width: 800px;
-      margin: auto;
-      color: #2c3e50;
-      line-height: 1.6;
-    }
-    h1 {
-      text-align: center;
-      color: #34495e;
-      margin-bottom: 30px;
-      font-size: 2.2em;
+    body{font-family:Arial,Helvetica,sans-serif;background:#f6f8fb;color:#042;display:flex;flex-direction: column; align-items:center;justify-content:center;padding:24px}
+    .card{width:720px;background:#fff;border-radius:10px;box-shadow:0 6px 24px rgba(2,6,23,0.08);padding:18px; margin-bottom: 20px;}
+    h1{font-size:18px;margin:0 0 8px}
+    p.lead{margin:0 0 12px;color:#555;font-size:13px}
+    label{display:block;font-size:13px;color:#333;margin-top:8px}
+    select,input{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;margin-top:6px}
+    .row{display:flex;gap:10px}
+    .row > div{flex:1}
+    button{margin-top:12px;padding:10px 12px;border:0;background:#0366d6;color:#fff;border-radius:8px;cursor:pointer}
+    .result{margin-top:12px;padding:12px;background:#eef6ff;border-radius:8px;color:#023}
+    .warn{margin-top:10px;padding:10px;background:#fff4e5;border:1px solid #ffd59e;border-radius:8px;color:#664200}
+    .muted{font-size:13px;color:#666;margin-top:6px}
+    
+    /* İkinci ve üçüncü dosya için stiller */
+    .section-header {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        margin-top: 30px;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #333;
+        padding-bottom: 5px;
+        width: 100%;
+        text-align: center;
     }
     .block {
       background: #fff;
@@ -31,6 +37,7 @@
       box-shadow: 0 6px 18px rgba(0,0,0,0.08);
       margin-bottom: 30px;
       border-left: 5px solid #3498db;
+      width: 100%;
     }
     .header {
       font-size: 1.5em;
@@ -41,10 +48,6 @@
       align-items: center;
       gap: 10px;
     }
-    .header i {
-      font-size: 1.2em;
-      color: #3498db;
-    }
     .highlight {
       color: #27ae60;
       font-weight: bold;
@@ -54,67 +57,6 @@
       font-size: 0.95em;
       margin-bottom: 15px;
       color: #7f8c8d;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #34495e;
-    }
-    input[type="number"] {
-      font-size: 1em;
-      padding: 12px;
-      width: 100%;
-      box-sizing: border-box;
-      border-radius: 8px;
-      border: 1px solid #cce7ff;
-      margin-bottom: 15px;
-      transition: border-color 0.3s ease;
-    }
-    input[type="number"]:focus {
-      outline: none;
-      border-color: #3498db;
-      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-    }
-    button {
-      background-color: #3498db;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1.1em;
-      font-weight: 600;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    button:hover {
-      background-color: #2980b9;
-      transform: translateY(-2px);
-    }
-    button:active {
-      transform: translateY(0);
-    }
-    p {
-      margin-bottom: 8px;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 15px 0 0 0;
-    }
-    ul li {
-      margin-bottom: 10px;
-      padding-left: 20px;
-      position: relative;
-    }
-    ul li:before {
-      content: '✔';
-      color: #27ae60;
-      position: absolute;
-      left: 0;
-      font-weight: bold;
     }
     .warning {
       background-color: #fcebeb;
@@ -127,97 +69,162 @@
       font-size: 1.2em;
       margin-top: 40px;
     }
+    
   </style>
 </head>
 <body>
-  <h1>📊 Inner Society Kazanç Tablosu</h1>
+  <div class="card">
+    <h1>Basit INNER Katkı Hesaplayıcı</h1>
+    <p class="lead">Hızlıca hangi yıllarda ve kaç blok ile INNER katkısının toplam payını gör.</p>
 
-  <div class="block">
-    <div class="header"><i class="fas fa-info-circle"></i> Kazanç Modelimiz: Büyümenin Gücü</div>
-    <div class="desc">
-      Inner Society'nin dinamik kazanç modeli, **davetlerinizin** ve referanslarınızın **çabasının** birleşimiyle şekillenir.
-      Sisteme referansınızla katılan her kişinin kendi davetiyle **en az iki (2) ücretli üye** getirmesi, kazanç hesaplamasının başlangıç noktası ve temel modülü olarak kabul edilir.
-      Bu minimum davet sayısına ulaşıldıktan sonra, referanslarınızla gelen **her yeni üye** için kazancınız **standart 2 kat çarpanı** ile hesaplanır. Bu formül, sistemdeki büyümenizi ve potansiyel gelirinizi doğrudan etkileyen anahtar prensibimizdir.
+    <label>Toplam Hisse Seç (adet)</label>
+    <select id="totalShares">
+    </select>
+
+    <div class="row">
+      <div>
+        <label>INNER SOCIETY : Yıllık gelen gri blok sayısı</label>
+        <input id="innerPerYear" type="number" value="20" min="0">
+      </div>
+      <div>
+        <label>Hesaplanacak yıl sayısı</label>
+        <select id="years">
+        </select>
+      </div>
+    </div>
+    
+    <button id="calc">Hesapla</button>
+
+    <div id="out" class="result" style="display:none"></div>
+
+    <div class="warn">
+      <strong>Uyarı:</strong> Bu hesap basitleştirilmiştir. Her hisse <strong>50 USD</strong> değer taşır.
+    </div>
+    <div class="muted">Not: "INNER" buradaki gri bloklardır; seçtiğiniz blok sayısı yıllık olarak toplanır.</div>
+  </div>
+
+  <hr>
+
+  <div class="card">
+    <h1>📊 Inner Society Kazanç Tablosu</h1>
+    <div class="block">
+      <div class="header">Kazanç Modelimiz: Büyümenin Gücü</div>
+      <div class="desc">
+        Inner Society'nin dinamik kazanç modeli, **davetlerinizin** ve referanslarınızın **çabasının** birleşimiyle şekillenir.
+        Sisteme referansınızla katılan her kişinin kendi davetiyle **en az iki (2) ücretli üye** getirmesi, kazanç hesaplamasının başlangıç noktası ve temel modülü olarak kabul edilir.
+        Bu minimum davet sayısına ulaşıldıktan sonra, referanslarınızla gelen **her yeni üye** için kazancınız **standart 2 kat çarpanı** ile hesaplanır. Bu formül, sistemdeki büyümenizi ve potansiyel gelirinizi doğrudan etkileyen anahtar prensibimizdir.
+      </div>
+    </div>
+
+    <div class="block">
+      <label for="inputValue">Referans kodunuzla gelen kişi sayısını girin:</label>
+      <input type="number" id="inputValue" placeholder="Örn: 40" min="1" />
+      <button onclick="hesapla()">Kazancınızı Hesaplayın</button>
+    </div>
+
+    <div id="result-sections">
+      <div id="nakit" class="block" style="display:none;"></div>
+      <div id="krediler" class="block" style="display:none;"></div>
+      <div id="airdrop" class="block" style="display:none;"></div>
+      <div id="griBlok" class="block" style="display:none;"></div>
+    </div>
+
+    <div class="warning">
+      BU HESAPLAMA MODÜLÜ, SİSTEMİN HER KATMANININ EN ALT SEVİYEYE KADAR TAMAMEN DOLDUĞU VARSAYIMIYLA GEÇERLİDİR.
     </div>
   </div>
 
-  <div class="block">
-    <label for="inputValue">Referans kodunuzla gelen kişi sayısını girin:</label>
-    <input type="number" id="inputValue" placeholder="Örn: 40" min="1" />
-    <button onclick="hesapla()"><i class="fas fa-calculator"></i> Kazancınızı Hesaplayın</button>
-  </div>
+  <hr>
 
-  <!-- Hesaplama sonuçları buraya eklenecek -->
-  <div id="result-sections">
-    <div id="nakit" class="block" style="display:none;"></div>
-    <div id="krediler" class="block" style="display:none;"></div>
-    <div id="airdrop" class="block" style="display:none;"></div>
-    <div id="griBlok" class="block" style="display:none;"></div>
-  </div>
+  <div class="card">
+    <h2 style="color: #2C3E50;">🔗 Inner Society QR Generator</h2>
+    <input type="text" id="link-input" placeholder="Paste your Inner Society link..." 
+           style="width: 300px; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+    <button onclick="generateQRCode()" 
+            style="padding: 8px 12px; margin-left: 10px; background-color: #27AE60; color: white; border: none; border-radius: 5px;">
+      Generate QR
+    </button>
 
-  <div class="warning">
-    BU HESAPLAMA MODÜLÜ, SİSTEMİN HER KATMANININ EN ALT SEVİYEYE KADAR TAMAMEN DOLDUĞU VARSAYIMIYLA GEÇERLİDİR.
-  </div>
+    <div id="qrcode" style="margin-top: 20px; padding: 10px; border: 1px dashed #aaa; display: inline-block;"></div>
 
+    <br><br>
+    <button id="download-btn" onclick="downloadQRCode()" 
+            style="display: none; padding: 8px 12px; background-color: #2980B9; color: white; border: none; border-radius: 5px;">
+      Download QR Code
+    </button>
+  </div>
+  
   <script>
-    /**
-     * Inner Society kazançlarını hesaplayan ana fonksiyon.
-     * Kullanıcının girdiği referans sayısına göre nakit, kredi, airdrop ve gri blok kazançlarını hesaplar.
-     */
+    // index.html.HTML script
+    const sel = document.getElementById('totalShares');
+    for(let v=2000; v<=10000; v+=500){ const o=document.createElement('option'); o.value=v; o.textContent=v; if(v===2500) o.selected=true; sel.appendChild(o);}
+    const ys = document.getElementById('years');
+    for(let y=15;y<=30;y++){ const o=document.createElement('option'); o.value=y; o.textContent=y+ ' yıl'; if(y===20) o.selected=true; ys.appendChild(o);}
+    
+    function fmt(n){ return Number(n).toLocaleString(); }
+
+    document.getElementById('calc').onclick = ()=>{
+      const totalShares = Number(document.getElementById('totalShares').value);
+      const innerPerYear = Number(document.getElementById('innerPerYear').value);
+      const sharePerBlock = 1;
+      const years = Number(document.getElementById('years').value);
+      const shareValue = 50;
+      const innerHissePerYear = innerPerYear * sharePerBlock;
+      const totalInner = innerHissePerYear * years;
+      const pct = totalInner / totalShares * 100;
+      const valueTL = (totalInner * shareValue);
+      const out = document.getElementById('out');
+      out.style.display='block';
+      out.innerHTML = `
+        <div><strong>${years} yıl</strong> sonunda INNER toplam katkısı: <strong>${fmt(totalInner)}</strong> hisse</div>
+        <div style="margin-top:6px">Toplam hissenin yüzdesi: <strong>${pct.toFixed(2)}%</strong> INNER SOCİETY TARAFINDAN KARŞILANMAKTADIR.</div>
+        <div style="margin-top:6px">Bu katkının parasal karşılığı: <strong>${fmt(valueTL)} USD</strong> (1 hisse = ${shareValue} USD)</div>
+        <div style="margin-top:6px;color:#333">Seçilen: toplam hisse = <strong>${totalShares}</strong>, INNER = <strong>${innerPerYear}</strong> blok/yıl</div>
+      `;
+    }
+
+    // kaç kişi gerekli.html script
     function hesapla() {
       const giris = parseInt(document.getElementById("inputValue").value);
       
-      // Girişin geçerli bir sayı olup olmadığını kontrol et
       if (isNaN(giris) || giris <= 0) {
         alert("Lütfen geçerli ve pozitif bir sayı giriniz.");
         document.getElementById("result-sections").style.display = "none";
         return;
       }
 
-      // Sonuç alanlarını görünür yap
       document.getElementById("result-sections").style.display = "block";
       document.getElementById("nakit").style.display = "block";
       document.getElementById("krediler").style.display = "block";
       document.getElementById("airdrop").style.display = "block";
       document.getElementById("griBlok").style.display = "block";
 
-      // 7 katman için çarpanları tanımla
       const carp = [1, 2, 4, 8, 16, 32, 64]; 
       let toplamKisi = 0;
       
-      // Toplam kişi sayısını hesapla
       carp.forEach(c => toplamKisi += giris * c);
 
-      // Nakit Geliri Hesaplama
-      // Her kişi için 1.25 USD nakit kazanç ve maksimum 5000 USD limit
       const nakitHam = toplamKisi * 1.25;
       const nakit = Math.min(nakitHam, 5000);
 
-      // Kredi Bilgisi Hesaplama
       const krediHam = toplamKisi * 1.25;
       const krediLimit = 5000;
       const yesilKredi = Math.min(krediHam, krediLimit);
       const kirmiziKredi = Math.min(krediHam, krediLimit);
 
-      // Airdrop Dağılımı Hesaplama
-      // Toplam airdrop = nakit / 4 formülüyle hesaplanır, her biri 1250 USD ile sınırlıdır
       const airdropNakit = Math.min(nakit / 4, 1250);
       const airdropKredi = Math.min(nakit / 4, 1250);
       const airdropGri = Math.min(nakit / 4, 1250);
       const airdropSpar = Math.min(nakit / 4, 1250);
       const airdropToplam = airdropNakit + airdropKredi + airdropGri + airdropSpar;
       
-      // Airdrop Gri için Gri Blok sayısı hesaplama
       const airdropGriBlokSayisi = Math.floor(airdropGri / 50);
 
-      // Gri Blok Durumu Hesaplama
-      // Her 100 USD nakit gelir için 1 gri blok
       const griBlokSayisi = Math.floor(nakit / 100);
       const devredenTutar = (nakit % 100).toFixed(2);
 
-      // Nakit Sonuçlarını Ekrana Yazdırma
       document.getElementById("nakit").innerHTML = `
-        <div class="header"><i class="fas fa-money-bill-wave"></i> Nakit Geliri</div>
+        <div class="header">Nakit Geliri</div>
         <div class="desc">
           Sisteme sağladığınız katkı oranına göre elde ettiğiniz yıllık nakit kazanç.
           <br><strong>Nakit Çekim Hakkı:</strong> Bu hak her yıl azalarak devam eder ve <span class="highlight">2031 yılında tamamen kalkar.</span>
@@ -225,9 +232,8 @@
         <p>Hesaplanan Nakit: <span class="highlight">${nakit.toFixed(2)} USD</span></p>
       `;
 
-      // Kredi Sonuçlarını Ekrana Yazdırma
       document.getElementById("krediler").innerHTML = `
-        <div class="header"><i class="fas fa-credit-card"></i> Kredi Bilgisi</div>
+        <div class="header">Kredi Bilgisi</div>
         <div class="desc">
           Yıl boyunca kullanabileceğiniz iki tür kredi; katkınıza göre otomatik olarak oluşur. Her biri için <span class="highlight">üst limit 5000 USD'dir.</span>
           <br><strong>Airdrop Karşılığı:</strong> Airdrop Kredi kazanımı, Yeşil Kredi dolana kadar katkı sağlar.
@@ -236,9 +242,8 @@
         <p>Kırmızı Kredi: <span class="highlight">${kirmiziKredi.toFixed(2)} USD</span></p>
       `;
 
-      // Airdrop Sonuçlarını Ekrana Yazdırma
       document.getElementById("airdrop").innerHTML = `
-        <div class="header"><i class="fas fa-gift"></i> Airdrop Dağılımı</div>
+        <div class="header">Airdrop Dağılımı</div>
         <div class="desc">
           Nakit gelirinizin %25'i oranında hesaplanır ve her bir kategori için <span class="highlight">maksimum 1250 USD</span> olabilir. Toplam Airdrop limiti 5000 USD'dir.
         </div>
@@ -264,9 +269,8 @@
         <p style="margin-top: 20px;"><strong>Toplam Airdrop Kazancınız:</strong> <span class="highlight">${airdropToplam.toFixed(2)} USD</span></p>
       `;
 
-      // Gri Blok Sonuçlarını Ekrana Yazdırma
       document.getElementById("griBlok").innerHTML = `
-        <div class="header"><i class="fas fa-cubes"></i> Gri Blok Durumu</div>
+        <div class="header">Gri Blok Durumu</div>
         <div class="desc">
           Her <span class="highlight">100 dolarlık</span> nakit gelir için bir Gri Blok kazanırsınız. Kalan miktar bir sonraki yıla devredilir.
           <br><strong>Ek Kazanç (Airdrop karşılığı):</strong> Gri Bloklar, Airdrop kapsamında ömür boyu kazanılır ve her <span class="highlight">50 USD</span> Airdrop Gri karşılığında 1 blok olarak tanımlanır.
@@ -276,10 +280,40 @@
       `;
     }
     
-    // Sayfa ilk yüklendiğinde sonuç alanlarını gizle
     document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById("result-sections").style.display = "none";
+        const sections = document.getElementById("result-sections");
+        if (sections) {
+            sections.style.display = "none";
+        }
     });
+
+    // QR kodu resıme dönüştür.HTML script
+    let qrCanvas;
+
+    function generateQRCode() {
+      const link = document.getElementById("link-input").value;
+      const qrcodeDiv = document.getElementById("qrcode");
+      qrcodeDiv.innerHTML = "";
+
+      const qr = new QRCode(qrcodeDiv, {
+        text: link,
+        width: 128,
+        height: 128
+      });
+
+      setTimeout(() => {
+        qrCanvas = qrcodeDiv.querySelector("canvas");
+        document.getElementById("download-btn").style.display = "inline-block";
+      }, 500);
+    }
+
+    function downloadQRCode() {
+      if (!qrCanvas) return;
+      const link = document.createElement("a");
+      link.href = qrCanvas.toDataURL("image/png");
+      link.download = "innersociety_qr.png";
+      link.click();
+    }
   </script>
 </body>
 </html>
