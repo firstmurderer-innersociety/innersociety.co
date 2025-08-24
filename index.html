@@ -6,42 +6,160 @@
   <title>Birleştirilmiş İçerik</title>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <style>
-    body{font-family:Arial,Helvetica,sans-serif;background:#f6f8fb;color:#042;display:flex;flex-direction: column; align-items:center;justify-content:center;padding:24px}
-    .card{width:720px;background:#fff;border-radius:10px;box-shadow:0 6px 24px rgba(2,6,23,0.08);padding:18px; margin-bottom: 20px;}
-    h1{font-size:18px;margin:0 0 8px}
-    p.lead{margin:0 0 12px;color:#555;font-size:13px}
-    label{display:block;font-size:13px;color:#333;margin-top:8px}
-    select,input{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;margin-top:6px}
-    .row{display:flex;gap:10px}
-    .row > div{flex:1}
-    button{margin-top:12px;padding:10px 12px;border:0;background:#0366d6;color:#fff;border-radius:8px;cursor:pointer}
-    .result{margin-top:12px;padding:12px;background:#eef6ff;border-radius:8px;color:#023}
-    .warn{margin-top:10px;padding:10px;background:#fff4e5;border:1px solid #ffd59e;border-radius:8px;color:#664200}
-    .muted{font-size:13px;color:#666;margin-top:6px}
+    /*
+      Global stiller ve sıfırlamalar.
+      `box-sizing: border-box` ile padding ve border'ın element genişliğine dahil olması sağlanır.
+    */
+    * {
+      box-sizing: border-box;
+    }
     
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f6f8fb;
+      color: #042;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px; /* Mobil için daha az padding */
+      margin: 0; /* Boşlukları kaldır */
+    }
+
+    /*
+      Kart stilini mobil uyumlu hale getiriyoruz.
+      `max-width` kullanılarak geniş ekranlarda en fazla 720px,
+      mobil ekranlarda ise tam genişlik kullanılır.
+    */
+    .card {
+      width: 100%; /* Mobil cihazlarda tam genişlik */
+      max-width: 720px; /* Geniş ekranlar için maksimum genişlik */
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 6px 24px rgba(2,6,23,0.08);
+      padding: 18px;
+      margin-bottom: 20px;
+      text-align: center; /* İçeriklerin ortalanması için */
+    }
+
+    h1 {
+      font-size: 18px;
+      margin: 0 0 8px;
+    }
+    
+    h2 {
+      font-size: 1.2em; /* Mobil için başlık fontunu küçült */
+      color: #2C3E50;
+      text-align: center;
+      margin: 0 0 10px;
+    }
+
+    p.lead {
+      margin: 0 0 12px;
+      color: #555;
+      font-size: 13px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #333;
+      margin-top: 8px;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin-top: 6px;
+    }
+
+    /*
+      İki sütunlu `row` yapısını mobil için alt alta hizalamaya ayarlıyoruz.
+      `flex-direction: column` ile mobil cihazlarda dikey hizalama sağlanır.
+    */
+    .row {
+      display: flex;
+      flex-direction: column; /* Mobil için alt alta */
+      gap: 10px;
+    }
+    
+    /* Geniş ekranlarda yatay hizalamaya geri dön */
+    @media (min-width: 600px) {
+      .row {
+        flex-direction: row;
+      }
+    }
+    
+    .row > div {
+      flex: 1;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border: 0;
+      background: #0366d6;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%; /* Mobil için butonları tam genişlik yap */
+    }
+    
+    .result, .warn, .muted {
+      text-align: left; /* Metni sola hizala */
+    }
+
+    .result {
+      margin-top: 12px;
+      padding: 12px;
+      background: #eef6ff;
+      border-radius: 8px;
+      color: #023;
+    }
+
+    .warn {
+      margin-top: 10px;
+      padding: 10px;
+      background: #fff4e5;
+      border: 1px solid #ffd59e;
+      border-radius: 8px;
+      color: #664200;
+    }
+
+    .muted {
+      font-size: 13px;
+      color: #666;
+      margin-top: 6px;
+    }
+
     /* İkinci ve üçüncü dosya için stiller */
     .section-header {
-        font-size: 24px;
-        font-weight: bold;
-        color: #333;
-        margin-top: 30px;
-        margin-bottom: 10px;
-        border-bottom: 2px solid #333;
-        padding-bottom: 5px;
-        width: 100%;
-        text-align: center;
+      font-size: 20px; /* Mobil için font boyutunu ayarla */
+      font-weight: bold;
+      color: #333;
+      margin-top: 30px;
+      margin-bottom: 10px;
+      border-bottom: 2px solid #333;
+      padding-bottom: 5px;
+      width: 100%;
+      text-align: center;
     }
+    
     .block {
       background: #fff;
-      padding: 25px;
+      padding: 15px; /* Mobil için daha az padding */
       border-radius: 12px;
       box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-      margin-bottom: 30px;
+      margin-bottom: 20px; /* Mobil için daha az margin */
       border-left: 5px solid #3498db;
       width: 100%;
+      text-align: left;
     }
+
     .header {
-      font-size: 1.5em;
+      font-size: 1.2em; /* Mobil için font boyutunu küçült */
       font-weight: 700;
       margin-bottom: 10px;
       color: #34495e;
@@ -49,31 +167,71 @@
       align-items: center;
       gap: 10px;
     }
+
     .highlight {
       color: #27ae60;
       font-weight: bold;
-      font-size: 1.1em;
+      font-size: 1em; /* Mobil için font boyutunu ayarla */
     }
+
     .desc {
-      font-size: 0.95em;
+      font-size: 0.9em; /* Mobil için font boyutunu küçült */
       margin-bottom: 15px;
       color: #7f8c8d;
     }
+    
+    ul {
+      padding-left: 20px; /* Mobil için liste paddingini ayarla */
+    }
+
     .warning {
       background-color: #fcebeb;
       color: #c0392b;
-      padding: 20px;
+      padding: 15px; /* Mobil için paddingi ayarla */
       border-radius: 12px;
       border: 2px solid #e74c3c;
       text-align: center;
       font-weight: 700;
-      font-size: 1.2em;
-      margin-top: 40px;
+      font-size: 1em; /* Mobil için font boyutunu küçült */
+      margin-top: 20px;
     }
     
+    hr {
+      width: 100%;
+      max-width: 720px;
+      border: 0;
+      height: 1px;
+      background-color: #ddd;
+      margin: 20px 0;
+    }
+
+    #link-input {
+      width: 100%; /* Mobil için tam genişlik */
+      max-width: 300px; /* Geniş ekranlar için max genişlik */
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      display: block; /* Yeni satıra geç */
+    }
+
+    #qrcode-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #download-btn {
+      width: auto; /* Düğmenin genişliğini otomatik yap */
+    }
+
   </style>
 </head>
 <body>
+  <!-- 
+    Birinci kart: INNER SOCIETY GRİ BLOKLA NE KAZANIRSINIZ
+  -->
   <div class="card">
     <h1>INNER SOCIETY GRİ BLOKLA NE KAZANIRSINIZ</h1>
     <p class="lead">Hızlıca hangi yıllarda ve kaç blok ile INNER SOCİETY katkısının toplam payını gör.</p>
@@ -106,6 +264,9 @@
 
   <hr>
 
+  <!-- 
+    İkinci kart: Referanla Gelen Standart Çarpan 2 Hesap Modülü
+  -->
   <div class="card">
     <h1>📊 Inner Society Referanla Gelen Standart Çarpan 2 Hesap Modülü</h1>
     <div class="block">
@@ -137,24 +298,19 @@
 
   <hr>
 
+  <!-- 
+    Üçüncü kart: QR Kod oluşturma
+  -->
   <div class="card">
-    <h2 style="color: #2C3E50;">🔗 INNER SOCIETY REFERANS KODUNU RESME DÖNÜŞTÜR.</h2>
-    <h2 style="color: #2C3E50;">🔗 TELEFON NUMARASINI BİLMENİZE GEREK KALMAZ.
-    <h2 style="color: #2C3E50;">🔗 RESMİ İNDİRİN.KENDİ REFERANS KODUNUZ OLDUĞUNU KONTROL EDİNİZ.</h2>
-    <input type="text" id="link-input" placeholder="Paste your Inner Society link..." 
-           style="width: 300px; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
-    <button onclick="generateQRCode()" 
-            style="padding: 8px 12px; margin-left: 10px; background-color: #27AE60; color: white; border: none; border-radius: 5px;">
-      Generate QR
-    </button>
-
-    <div id="qrcode" style="margin-top: 20px; padding: 10px; border: 1px dashed #aaa; display: inline-block;"></div>
-
-    <br><br>
-    <button id="download-btn" onclick="downloadQRCode()" 
-            style="display: none; padding: 8px 12px; background-color: #2980B9; color: white; border: none; border-radius: 5px;">
-      Download QR Code
-    </button>
+    <h2>🔗 INNER SOCIETY REFERANS KODUNU RESME DÖNÜŞTÜR.</h2>
+    <h2>🔗 TELEFON NUMARASINI BİLMENİZE GEREK KALMAZ.</h2>
+    <input type="text" id="link-input" placeholder="Inner Society linkinizi buraya yapıştırın..." />
+    
+    <div id="qrcode-container">
+      <button onclick="generateQRCode()">QR Kod Oluştur</button>
+      <div id="qrcode" style="margin-top: 20px; padding: 10px; display: inline-block;"></div>
+      <button id="download-btn" onclick="downloadQRCode()" style="display: none;">QR Kodu İndir</button>
+    </div>
   </div>
   
   <script>
@@ -191,9 +347,17 @@
       const giris = parseInt(document.getElementById("inputValue").value);
       
       if (isNaN(giris) || giris <= 0) {
-        alert("Lütfen geçerli ve pozitif bir sayı giriniz.");
-        document.getElementById("result-sections").style.display = "none";
+        // alert yerine daha şık bir yöntem
+        const sections = document.getElementById("result-sections");
+        const out = sections.querySelector('.warn') || document.createElement('div');
+        out.className = 'warn';
+        out.innerHTML = 'Lütfen geçerli ve pozitif bir sayı giriniz.';
+        if (!sections.querySelector('.warn')) sections.prepend(out);
+        sections.style.display = "block";
         return;
+      } else {
+        const out = document.getElementById("result-sections").querySelector('.warn');
+        if (out) out.remove();
       }
 
       document.getElementById("result-sections").style.display = "block";
@@ -298,6 +462,12 @@
       const qrcodeDiv = document.getElementById("qrcode");
       qrcodeDiv.innerHTML = "";
 
+      if (link.trim() === "") {
+        qrcodeDiv.innerHTML = "<p style='color:red;'>Lütfen bir link giriniz.</p>";
+        document.getElementById("download-btn").style.display = "none";
+        return;
+      }
+      
       const qr = new QRCode(qrcodeDiv, {
         text: link,
         width: 128,
