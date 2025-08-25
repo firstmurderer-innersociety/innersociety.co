@@ -1,492 +1,620 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Birleştirilmiş İçerik</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  <style>
-    /*
-      Global stiller ve sıfırlamalar.
-      `box-sizing: border-box` ile padding ve border'ın element genişliğine dahil olması sağlanır.
-    */
-    * {
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f6f8fb;
-      color: #042;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 12px; /* Mobil için daha az padding */
-      margin: 0; /* Boşlukları kaldır */
-    }
-
-    /*
-      Kart stilini mobil uyumlu hale getiriyoruz.
-      `max-width` kullanılarak geniş ekranlarda en fazla 720px,
-      mobil ekranlarda ise tam genişlik kullanılır.
-    */
-    .card {
-      width: 100%; /* Mobil cihazlarda tam genişlik */
-      max-width: 720px; /* Geniş ekranlar için maksimum genişlik */
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 6px 24px rgba(2,6,23,0.08);
-      padding: 18px;
-      margin-bottom: 20px;
-      text-align: center; /* İçeriklerin ortalanması için */
-    }
-
-    h1 {
-      font-size: 18px;
-      margin: 0 0 8px;
-    }
-    
-    h2 {
-      font-size: 1.2em; /* Mobil için başlık fontunu küçült */
-      color: #2C3E50;
-      text-align: center;
-      margin: 0 0 10px;
-    }
-
-    p.lead {
-      margin: 0 0 12px;
-      color: #555;
-      font-size: 13px;
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      color: #333;
-      margin-top: 8px;
-    }
-
-    select, input {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      margin-top: 6px;
-    }
-
-    /*
-      İki sütunlu `row` yapısını mobil için alt alta hizalamaya ayarlıyoruz.
-      `flex-direction: column` ile mobil cihazlarda dikey hizalama sağlanır.
-    */
-    .row {
-      display: flex;
-      flex-direction: column; /* Mobil için alt alta */
-      gap: 10px;
-    }
-    
-    /* Geniş ekranlarda yatay hizalamaya geri dön */
-    @media (min-width: 600px) {
-      .row {
-        flex-direction: row;
-      }
-    }
-    
-    .row > div {
-      flex: 1;
-    }
-
-    button {
-      margin-top: 12px;
-      padding: 10px 12px;
-      border: 0;
-      background: #0366d6;
-      color: #fff;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 100%; /* Mobil için butonları tam genişlik yap */
-    }
-    
-    .result, .warn, .muted {
-      text-align: left; /* Metni sola hizala */
-    }
-
-    .result {
-      margin-top: 12px;
-      padding: 12px;
-      background: #eef6ff;
-      border-radius: 8px;
-      color: #023;
-    }
-
-    .warn {
-      margin-top: 10px;
-      padding: 10px;
-      background: #fff4e5;
-      border: 1px solid #ffd59e;
-      border-radius: 8px;
-      color: #664200;
-    }
-
-    .muted {
-      font-size: 13px;
-      color: #666;
-      margin-top: 6px;
-    }
-
-    /* İkinci ve üçüncü dosya için stiller */
-    .section-header {
-      font-size: 20px; /* Mobil için font boyutunu ayarla */
-      font-weight: bold;
-      color: #333;
-      margin-top: 30px;
-      margin-bottom: 10px;
-      border-bottom: 2px solid #333;
-      padding-bottom: 5px;
-      width: 100%;
-      text-align: center;
-    }
-    
-    .block {
-      background: #fff;
-      padding: 15px; /* Mobil için daha az padding */
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-      margin-bottom: 20px; /* Mobil için daha az margin */
-      border-left: 5px solid #3498db;
-      width: 100%;
-      text-align: left;
-    }
-
-    .header {
-      font-size: 1.2em; /* Mobil için font boyutunu küçült */
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: #34495e;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .highlight {
-      color: #27ae60;
-      font-weight: bold;
-      font-size: 1em; /* Mobil için font boyutunu ayarla */
-    }
-
-    .desc {
-      font-size: 0.9em; /* Mobil için font boyutunu küçült */
-      margin-bottom: 15px;
-      color: #7f8c8d;
-    }
-    
-    ul {
-      padding-left: 20px; /* Mobil için liste paddingini ayarla */
-    }
-
-    .warning {
-      background-color: #fcebeb;
-      color: #c0392b;
-      padding: 15px; /* Mobil için paddingi ayarla */
-      border-radius: 12px;
-      border: 2px solid #e74c3c;
-      text-align: center;
-      font-weight: 700;
-      font-size: 1em; /* Mobil için font boyutunu küçült */
-      margin-top: 20px;
-    }
-    
-    hr {
-      width: 100%;
-      max-width: 720px;
-      border: 0;
-      height: 1px;
-      background-color: #ddd;
-      margin: 20px 0;
-    }
-
-    #link-input {
-      width: 100%; /* Mobil için tam genişlik */
-      max-width: 300px; /* Geniş ekranlar için max genişlik */
-      padding: 8px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      margin-bottom: 10px;
-      display: block; /* Yeni satıra geç */
-    }
-
-    #qrcode-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-
-    #download-btn {
-      width: auto; /* Düğmenin genişliğini otomatik yap */
-    }
-
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ShareStackEstate & Inner Society Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #1A237E 0%, #111827 100%);
+            color: #E0E0E0;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .main-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 40px;
+            background: #1F2937;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        h1, h2 {
+            margin-bottom: 30px;
+            text-align: center;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1.5px;
+            font-size: 2.5em;
+        }
+        section {
+            padding: 40px 0;
+            border-bottom: 2px dashed #37474F;
+        }
+        section:last-of-type {
+            border-bottom: none;
+        }
+        h2.section-title {
+            font-size: 2em;
+            margin-bottom: 25px;
+            color: #E0E0E0;
+        }
+        .block {
+            background: #263238;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            border-left: 5px solid #FFD700;
+        }
+        .header {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #E0E0E0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header i {
+            font-size: 1.2em;
+            color: #FFD700;
+        }
+        .highlight {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .desc {
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            color: #B0BEC5;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #90A4AE;
+        }
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #37474F;
+            background: #263238;
+            color: #E0E0E0;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.4);
+        }
+        button {
+            width: 100%;
+            padding: 15px 18px;
+            border: 0;
+            border-radius: 10px;
+            background: #FFD700;
+            color: #1A237E;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+        }
+        button:hover {
+            background: #C49B00;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .results {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .results > div {
+            padding: 25px;
+            background: #263238;
+            border-radius: 15px;
+            border: 1px solid #37474F;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .results h3 {
+            color: #FFD700;
+            margin-top: 0;
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 12px;
+            font-size: 1.4em;
+        }
+        .results p {
+            margin: 8px 0;
+            font-size: 16px;
+        }
+        .results b {
+            color: #FFFFFF;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 40px;
+        }
+        table {
+            min-width: 600px;
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid #37474F;
+            padding: 15px;
+            text-align: center;
+        }
+        th {
+            background: #263238;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            color: #FFD700;
+            font-size: 1.1em;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #2E3841;
+        }
+        tbody tr:hover {
+            background-color: #37474F;
+        }
+        .warning {
+            background-color: #37474F;
+            color: #FF5252;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #FF5252;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-top: 40px;
+        }
+        #inner-katkisi-baslik {
+            color: #FF5252 !important;
+            border-bottom-color: #FF5252 !important;
+        }
+        #final-summary {
+            background: #263238;
+            border: 1px solid #FF5252;
+            box-shadow: 0 0 15px rgba(255, 82, 82, 0.4);
+        }
+        #final-summary h3 {
+            color: #FF5252;
+        }
+        .input-group-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .form-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .checkbox-container input[type="checkbox"] {
+            width: auto;
+        }
+        .qr-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .qr-input-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .qr-input-group input[type="text"] {
+            flex-grow: 1;
+            min-width: 200px;
+        }
+        #qrcode-section {
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px dashed #37474F;
+            border-radius: 15px;
+            display: inline-block;
+            background: #263238;
+        }
+        #download-link {
+            display: none;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #FF5252;
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        #download-link:hover {
+            background-color: #C0392B;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            .input-group-grid, .results { grid-template-columns: 1fr; }
+            .main-container { padding: 20px; }
+            h1, h2 { font-size: 2em; }
+        }
+    </style>
 </head>
 <body>
-  <!-- 
-    Birinci kart: INNER SOCIETY GRİ BLOKLA NE KAZANIRSINIZ
-  -->
-  <div class="card">
-    <h1>INNER SOCIETY GRİ BLOKLA NE KAZANIRSINIZ</h1>
-    <p class="lead">Hızlıca hangi yıllarda ve kaç blok ile INNER SOCİETY katkısının toplam payını gör.</p>
+<div class="main-container">
 
-    <label>Toplam Hisse Seç (adet)</label>
-    <select id="totalShares">
-    </select>
-
-    <div class="row">
-      <div>
-        <label>INNER SOCIETY : Yıllık gelen gri blok sayısı</label>
-        <input id="innerPerYear" type="number" value="20" min="0">
-      </div>
-      <div>
-        <label>Hesaplanacak yıl sayısı</label>
-        <select id="years">
-        </select>
-      </div>
-    </div>
-    
-    <button id="calc">Hesapla</button>
-
-    <div id="out" class="result" style="display:none"></div>
-
-    <div class="warn">
-      <strong>Uyarı:</strong> Bu hesap basitleştirilmiştir. Her hisse <strong>50 USD</strong> değer taşır.
-    </div>
-    <div class="muted">Not: "INNER" buradaki gri bloklardır; seçtiğiniz blok sayısı yıllık olarak toplanır.</div>
-  </div>
-
-  <hr>
-
-  <!-- 
-    İkinci kart: Referanla Gelen Standart Çarpan 2 Hesap Modülü
-  -->
-  <div class="card">
-    <h1>📊 Inner Society Referanla Gelen Standart Çarpan 2 Hesap Modülü</h1>
-    <div class="block">
-      <div class="header">Kazanç Modelimiz: Büyümenin Gücü</div>
-      <div class="desc">
-        Inner Society'nin dinamik kazanç modeli, **davetlerinizin** ve referanslarınızın **çabasının** birleşimiyle şekillenir.
-        Sisteme referansınızla katılan her kişinin kendi davetiyle **en az iki (2) ücretli üye** getirmesi, kazanç hesaplamasının başlangıç noktası ve temel modülü olarak kabul edilir.
-        Bu minimum davet sayısına ulaşıldıktan sonra, referanslarınızla gelen **her yeni üye** için kazancınız **standart 2 kat çarpanı** ile hesaplanır. Bu formül, sistemdeki büyümenizi ve potansiyel gelirinizi doğrudan etkileyen anahtar prensibimizdir.
-      </div>
-    </div>
-
-    <div class="block">
-      <label for="inputValue">Referans kodunuzla gelen kişi sayısını girin:</label>
-      <input type="number" id="inputValue" placeholder="Örn: 40" min="1" />
-      <button onclick="hesapla()">Kazancınızı Hesaplayın</button>
-    </div>
-
-    <div id="result-sections">
-      <div id="nakit" class="block" style="display:none;"></div>
-      <div id="krediler" class="block" style="display:none;"></div>
-      <div id="airdrop" class="block" style="display:none;"></div>
-      <div id="griBlok" class="block" style="display:none;"></div>
-    </div>
-
-    <div class="warning">
-      BU HESAPLAMA MODÜLÜ,KATILAN ÜYENİN 2 ÜYE GETİRMESİ ÜZERİNE KURULUDUR.SİSTEMİN HER KATMANININ EN ALT SEVİYEYE KADAR TAMAMEN DOLDUĞU VARSAYIMIYLA GEÇERLİDİR.
-    </div>
-  </div>
-
-  <hr>
-
-  <!-- 
-    Üçüncü kart: QR Kod oluşturma
-  -->
-  <div class="card">
-    <h2>🔗 INNER SOCIETY REFERANS KODUNU RESME DÖNÜŞTÜR.</h2>
-    <h2>🔗 TELEFON NUMARASINI BİLMENİZE GEREK KALMAZ.</h2>
-    <input type="text" id="link-input" placeholder="Inner Society linkinizi buraya yapıştırın..." />
-    
-    <div id="qrcode-container">
-      <button onclick="generateQRCode()">QR Kod Oluştur</button>
-      <div id="qrcode" style="margin-top: 20px; padding: 10px; display: inline-block;"></div>
-      <button id="download-btn" onclick="downloadQRCode()" style="display: none;">QR Kodu İndir</button>
-    </div>
-  </div>
-  
-  <script>
-    // index.html.HTML script
-    const sel = document.getElementById('totalShares');
-    for(let v=2000; v<=10000; v+=500){ const o=document.createElement('option'); o.value=v; o.textContent=v; if(v===2500) o.selected=true; sel.appendChild(o);}
-    const ys = document.getElementById('years');
-    for(let y=15;y<=30;y++){ const o=document.createElement('option'); o.value=y; o.textContent=y+ ' yıl'; if(y===20) o.selected=true; ys.appendChild(o);}
-    
-    function fmt(n){ return Number(n).toLocaleString(); }
-
-    document.getElementById('calc').onclick = ()=>{
-      const totalShares = Number(document.getElementById('totalShares').value);
-      const innerPerYear = Number(document.getElementById('innerPerYear').value);
-      const sharePerBlock = 1;
-      const years = Number(document.getElementById('years').value);
-      const shareValue = 50;
-      const innerHissePerYear = innerPerYear * sharePerBlock;
-      const totalInner = innerHissePerYear * years;
-      const pct = totalInner / totalShares * 100;
-      const valueTL = (totalInner * shareValue);
-      const out = document.getElementById('out');
-      out.style.display='block';
-      out.innerHTML = `
-        <div><strong>${years} yıl</strong> sonunda INNER toplam katkısı: <strong>${fmt(totalInner)}</strong> hisse</div>
-        <div style="margin-top:6px">Toplam hissenin yüzdesi: <strong>${pct.toFixed(2)}%</strong> INNER SOCİETY TARAFINDAN KARŞILANMAKTADIR.</div>
-        <div style="margin-top:6px">Bu katkının parasal karşılığı: <strong>${fmt(valueTL)} USD</strong> (1 hisse = ${shareValue} USD)</div>
-        <div style="margin-top:6px;color:#333">Seçilen: toplam hisse = <strong>${totalShares}</strong>, INNER = <strong>${innerPerYear}</strong> blok/yıl</div>
-      `;
-    }
-
-    // kaç kişi gerekli.html script
-    function hesapla() {
-      const giris = parseInt(document.getElementById("inputValue").value);
-      
-      if (isNaN(giris) || giris <= 0) {
-        // alert yerine daha şık bir yöntem
-        const sections = document.getElementById("result-sections");
-        const out = sections.querySelector('.warn') || document.createElement('div');
-        out.className = 'warn';
-        out.innerHTML = 'Lütfen geçerli ve pozitif bir sayı giriniz.';
-        if (!sections.querySelector('.warn')) sections.prepend(out);
-        sections.style.display = "block";
-        return;
-      } else {
-        const out = document.getElementById("result-sections").querySelector('.warn');
-        if (out) out.remove();
-      }
-
-      document.getElementById("result-sections").style.display = "block";
-      document.getElementById("nakit").style.display = "block";
-      document.getElementById("krediler").style.display = "block";
-      document.getElementById("airdrop").style.display = "block";
-      document.getElementById("griBlok").style.display = "block";
-
-      const carp = [1, 2, 4, 8, 16, 32, 64]; 
-      let toplamKisi = 0;
-      
-      carp.forEach(c => toplamKisi += giris * c);
-
-      const nakitHam = toplamKisi * 1.25;
-      const nakit = Math.min(nakitHam, 5000);
-
-      const krediHam = toplamKisi * 1.25;
-      const krediLimit = 5000;
-      const yesilKredi = Math.min(krediHam, krediLimit);
-      const kirmiziKredi = Math.min(krediHam, krediLimit);
-
-      const airdropNakit = Math.min(nakit / 4, 1250);
-      const airdropKredi = Math.min(nakit / 4, 1250);
-      const airdropGri = Math.min(nakit / 4, 1250);
-      const airdropSpar = Math.min(nakit / 4, 1250);
-      const airdropToplam = airdropNakit + airdropKredi + airdropGri + airdropSpar;
-      
-      const airdropGriBlokSayisi = Math.floor(airdropGri / 50);
-
-      const griBlokSayisi = Math.floor(nakit / 100);
-      const devredenTutar = (nakit % 100).toFixed(2);
-
-      document.getElementById("nakit").innerHTML = `
-        <div class="header">Nakit Geliri</div>
-        <div class="desc">
-          Sisteme sağladığınız katkı oranına göre elde ettiğiniz yıllık nakit kazanç.
-          <br><strong>Nakit Çekim Hakkı:</strong> Bu hak her yıl azalarak devam eder ve <span class="highlight">2031 yılında tamamen kalkar.</span>
+    <section id="sharestack-section">
+        <h1>ShareStackEstate.com Blok Hesaplama</h1>
+        <div class="input-group-grid">
+            <div class="form-item">
+                <label for="selHisse">Toplam Hisse</label>
+                <select id="selHisse"></select>
+            </div>
+            <div class="form-item">
+                <label for="selYil">Yıl</label>
+                <select id="selYil"></select>
+            </div>
+            <div class="form-item">
+                <label for="inpMavi">Mavi Blok (ilk katılım, max 100)</label>
+                <input type="number" id="inpMavi" value="100" min="0" max="100" />
+            </div>
+            <div class="form-item">
+                <label for="inpInner">Inner Yıllık Gri Blok</label>
+                <input type="number" id="inpInner" value="40" />
+            </div>
+            <div class="form-item">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="chkDuzenli" checked onchange="toggleDuzensiz()" /> Düzenli Yatırım (12 blok/yıl)
+                </label>
+            </div>
+            <div class="form-item">
+                <label for="inpDuzensiz">Düzensiz Yatırım (max 11)</label>
+                <input type="number" id="inpDuzensiz" value="0" min="0" max="11" />
+            </div>
+            <div class="form-item">
+                <label for="inpToplu">Yıllık Toplu Alım</label>
+                <input type="number" id="inpToplu" value="0" />
+            </div>
+            <div class="form-item">
+                <label for="inpBaslangic">Başlangıç Blok</label>
+                <input type="number" id="inpBaslangic" value="0" />
+            </div>
         </div>
-        <p>Hesaplanan Nakit: <span class="highlight">${nakit.toFixed(2)} USD</span></p>
-      `;
-
-      document.getElementById("krediler").innerHTML = `
-        <div class="header">Kredi Bilgisi</div>
-        <div class="desc">
-          Yıl boyunca kullanabileceğiniz iki tür kredi; katkınıza göre otomatik olarak oluşur. Her biri için <span class="highlight">üst limit 5000 USD'dir.</span>
-          <br><strong>Airdrop Karşılığı:</strong> Airdrop Kredi kazanımı, Yeşil Kredi dolana kadar katkı sağlar.
+        <button onclick="hesaplaShareStack()">Hesapla</button>
+        <div class="results">
+            <div>
+                <h3>Kullanıcı Katkısı</h3>
+                <p><b>Düzenli Yatırım ($):</b> <span id="duzenliUsd">-</span></p>
+                <p><b>Düzensiz Yatırım ($):</b> <span id="duzensizUsd">-</span></p>
+                <p><b>Toplu Alım ($):</b> <span id="topluUsd">-</span></p>
+                <p><b>Toplam Kullanıcı Yatırımı ($):</b> <span id="toplamUsd">-</span></p>
+            </div>
+            <div>
+                <h3 id="inner-katkisi-baslik">Inner Katkısı</h3>
+                <p><b>Inner Blok Toplamı:</b> <span id="innerBlok">-</span></p>
+                <p><b>Inner Katkı %:</b> <span id="innerPct">-</span></p>
+                <p><b>Kira Blok Toplamı:</b> <span id="kiraBlok">-</span></p>
+                <p><b>Kira Katkı %:</b> <span id="kiraPct">-</span></p>
+            </div>
+            <div>
+                <h3>Mülk ve Kira Bilgileri</h3>
+                <p><b>Mülk Değeri:</b> <span id="mulkDegeri">-</span></p>
+                <p><b>Yıllık Kira:</b> <span id="yillikKira">-</span></p>
+                <p><b>Aylık Kira:</b> <span id="aylikKira">-</span></p>
+            </div>
+            <div>
+                <h3>Kira Getiri Blok</h3>
+                <p><b>%25 Yılı:</b> <span id="y25">-</span> (<span id="y25Kira">-</span>)</p>
+                <p><b>%50 Yılı:</b> <span id="y50">-</span> (<span id="y50Kira">-</span>)</p>
+                <p><b>%75 Yılı:</b> <span id="y75">-</span> (<span id="y75Kira">-</span>)</p>
+                <p><b>%100 Yılı:</b> <span id="y100">-</span> (<span id="y100Kira">-</span>)</p>
+            </div>
         </div>
-        <p>Yeşil Kredi: <span class="highlight">${yesilKredi.toFixed(2)} USD</span></p>
-        <p>Kırmızı Kredi: <span class="highlight">${kirmiziKredi.toFixed(2)} USD</span></p>
-      `;
-
-      document.getElementById("airdrop").innerHTML = `
-        <div class="header">Airdrop Dağılımı</div>
-        <div class="desc">
-          Nakit gelirinizin %25'i oranında hesaplanır ve her bir kategori için <span class="highlight">maksimum 1250 USD</span> olabilir. Toplam Airdrop limiti 5000 USD'dir.
+        <div class="table-container">
+            <table id="tbl">
+                <thead>
+                    <tr>
+                        <th>Yıl</th>
+                        <th>Yıl Başı Blok</th>
+                        <th>Artış</th>
+                        <th>Toplam</th>
+                        <th>Kira ($)</th>
+                        <th>Cüzdan ($)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
-        <ul>
-          <li>
-            <strong>1. Nakit Airdrop:</strong> Ömür boyu nakit çekim hakkı sağlar.
-            <br>Kazanım: <span class="highlight">${airdropNakit.toFixed(2)} USD</span>
-          </li>
-          <li>
-            <strong>2. Kredi Airdrop:</strong> Yeşil kredi limitine ulaşana kadar verilir, ardından <span class="highlight">SPAR'a dönüşür.</span>
-            <br>Kazanım: <span class="highlight">${airdropKredi.toFixed(2)} USD</span>
-          </li>
-          <li>
-            <strong>3. Gri Airdrop:</strong> Ömür boyu kazanılır, her <span class="highlight">50 USD</span> karşılığı 1 Gri Blok değerindedir.
-            <br>Kazanım: <span class="highlight">${airdropGri.toFixed(2)} USD</span>
-            <br>Kazanılan Gri Blok: <span class="highlight">${airdropGriBlokSayisi} Adet</span>
-          </li>
-          <li>
-            <strong>4. SPAR Airdrop:</strong> Esnaf indirimlerinde kullanılmak üzere biriktirilir. Sistem açıldığında aktif hale gelir.
-            <br>Kazanım: <span class="highlight">${airdropSpar.toFixed(2)} USD</span>
-          </li>
-        </ul>
-        <p style="margin-top: 20px;"><strong>Toplam Airdrop Kazancınız:</strong> <span class="highlight">${airdropToplam.toFixed(2)} USD</span></p>
-      `;
-
-      document.getElementById("griBlok").innerHTML = `
-        <div class="header">Gri Blok Durumu</div>
-        <div class="desc">
-          Her <span class="highlight">100 dolarlık</span> nakit gelir için bir Gri Blok kazanırsınız. Kalan miktar bir sonraki yıla devredilir.
-          <br><strong>Ek Kazanç (Airdrop karşılığı):</strong> Gri Bloklar, Airdrop kapsamında ömür boyu kazanılır ve her <span class="highlight">50 USD</span> Airdrop Gri karşılığında 1 blok olarak tanımlanır.
+        <div id="final-summary" style="margin-top: 20px; padding: 15px; background: #1f2937; border-radius: 8px; display: none;">
+            <h3>Son Yıl Hesap Özeti</h3>
+            <p><b>Inner Katkısı:</b> <span id="final-inner-blocks">0</span> Blok</p>
+            <p><b>Kira Katkısı:</b> <span id="final-rent-blocks">0</span> Blok</p>
+            <p><b>Kullanıcı Katkısı:</b> <span id="final-user-blocks">0</span> Blok</p>
+            <p><b>Cüzdan Katkısı:</b> <span id="final-wallet-blocks">0</span> Blok</p>
+            <p><b>Son Yıl Toplam Artış:</b> <span id="final-total-increase">0</span> Blok</p>
+            <p><b>Son Yıl Kalan Nakit:</b> <span id="final-wallet-cash">$0.00</span></p>
         </div>
-        <p>Gri Blok Sayısı: <span class="highlight">${griBlokSayisi} Adet</span></p>
-        <p>Devreden Tutar: <span class="highlight">${devredenTutar} USD</span></p>
-      `;
-    }
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        const sections = document.getElementById("result-sections");
-        if (sections) {
-            sections.style.display = "none";
+    </section>
+
+    <section id="kazanc-tablosu-section">
+        <h2>Inner Society Kazanç Tablosu</h2>
+        <div class="block">
+            <div class="header"><i class="fas fa-info-circle"></i> Kazanç Modelimiz: Büyümenin Gücü</div>
+            <div class="desc">
+                Inner Society'nin dinamik kazanç modeli, **davetlerinizin** ve referanslarınızın **çabasının** birleşimiyle şekillenir.
+                Sisteme referansınızla katılan her kişinin kendi davetiyle **en az iki (2) ücretli üye** getirmesi, kazanç hesaplamasının başlangıç noktası ve temel modülü olarak kabul edilir.
+                Bu minimum davet sayısına ulaşıldıktan sonra, referanslarınızla gelen **her yeni üye** için kazancınız **standart 2 kat çarpanı** ile hesaplanır. Bu formül, sistemdeki büyümenizi ve potansiyel gelirinizi doğrudan etkileyen anahtar prensibimizdir.
+            </div>
+        </div>
+        <div class="block">
+            <label for="inputValue">Referans kodunuzla gelen kişi sayısını girin:</label>
+            <input type="number" id="inputValue" placeholder="Örn: 40" min="1" />
+            <button onclick="hesaplaKazanc()">Kazancınızı Hesaplayın</button>
+        </div>
+        <div id="result-sections">
+            <div id="nakit" class="block" style="display:none;"></div>
+            <div id="krediler" class="block" style="display:none;"></div>
+            <div id="airdrop" class="block" style="display:none;"></div>
+            <div id="griBlok" class="block" style="display:none;"></div>
+        </div>
+        <div class="warning">
+            BU HESAPLAMA MODÜLÜ, SİSTEMİN HER KATMANININ EN ALT SEVİYEYE KADAR TAMAMEN DOLDUĞU VARSAYIMIYLA GEÇERLİDİR.
+        </div>
+    </section>
+
+    <section id="qr-generator-section">
+        <h2>Inner Society QR Generator</h2>
+        <div class="qr-section">
+            <div class="qr-input-group">
+                <input type="text" id="link-input" placeholder="Inner Society linkinizi buraya yapıştırın..." />
+                <button onclick="generateQRCode()">QR Oluştur</button>
+            </div>
+            <div id="qrcode-section">
+                <div id="qrcode"></div>
+            </div>
+            <a id="download-link" href="#" download="innersociety_qr.png">QR Kodunu İndir</a>
+        </div>
+    </section>
+</div>
+
+<script>
+// ShareStackEstate.com Blok Hesaplama - Script
+const HISSE_USD = 50;
+const selHisse = document.getElementById('selHisse');
+for(let v=2000; v<=10000; v+=500){
+    let opt=document.createElement('option'); opt.value=v; opt.textContent=v; selHisse.appendChild(opt);
+}
+selHisse.value = 5000;
+const selYil = document.getElementById('selYil');
+for(let y=15; y<=50; y++){ let opt=document.createElement('option'); opt.value=y; opt.textContent=y; selYil.appendChild(opt); }
+selYil.value = 20;
+function toggleDuzensiz(){
+    document.getElementById('inpDuzensiz').disabled = document.getElementById('chkDuzenli').checked;
+}
+toggleDuzensiz();
+function hesaplaShareStack(){
+    const toplamHisse = Number(selHisse.value);
+    const yilSayisi = Number(selYil.value);
+    const mavi = Math.min(Number(document.getElementById('inpMavi').value),100);
+    const inner = Number(document.getElementById('inpInner').value);
+    const duzenli = document.getElementById('chkDuzenli').checked;
+    const duzensiz = duzenli ? 0 : Math.min(Number(document.getElementById('inpDuzensiz').value),11);
+    const toplu = Number(document.getElementById('inpToplu').value);
+    const baslangic = Number(document.getElementById('inpBaslangic').value);
+    const mulk = toplamHisse * HISSE_USD;
+    const yillikKira = mulk/20;
+    const aylikKira = yillikKira/12;
+    document.getElementById('mulkDegeri').textContent = `$${mulk}`;
+    document.getElementById('yillikKira').textContent = `$${yillikKira.toFixed(2)}`;
+    document.getElementById('aylikKira').textContent = `$${aylikKira.toFixed(2)}`;
+    let toplam = baslangic + mavi;
+    let innerToplam = 0;
+    let kiraToplam = 0;
+    let cuzdanBirikim = 0;
+    let kiraTier = 0;
+    const tbody = document.querySelector('#tbl tbody');
+    tbody.innerHTML = '';
+    document.getElementById('final-summary').style.display = 'none';
+    let y25=y50=y75=y100='-';
+    let y25Kira=y50Kira=y75Kira=y100Kira='-';
+    let duzenliUsd = 0;
+    let duzensizUsd = 0;
+    let topluUsd = 0;
+    let totalUserContributionBlocks = 0;
+    for(let yil=1; yil<=yilSayisi; yil++){
+        const yilBasiBlok = toplam;
+        const currentShare = yilBasiBlok / toplamHisse;
+        if (currentShare >= 0.75 && kiraTier < 3) { kiraTier = 3; y75=yil; } else if (currentShare >= 0.5 && kiraTier < 2) { kiraTier = 2; y50=yil; } else if (currentShare >= 0.25 && kiraTier < 1) { kiraTier = 1; y25=yil; }
+        let rentToUse = 0;
+        if (kiraTier > 0) {
+            if (kiraTier === 1) rentToUse = yillikKira / 4;
+            else if (kiraTier === 2) rentToUse = yillikKira / 2;
+            else if (kiraTier === 3) rentToUse = yillikKira;
         }
-    });
+        const blokAlim = Math.floor(rentToUse / HISSE_USD);
+        const remainingRentCash = rentToUse % HISSE_USD;
+        cuzdanBirikim += remainingRentCash;
+        const cüzdanBlokAlim = Math.floor(cuzdanBirikim / HISSE_USD);
+        cuzdanBirikim -= cüzdanBlokAlim * HISSE_USD;
+        const userInvestmentBlocks = (duzenli ? 12 : duzensiz) + toplu;
+        let arti = inner + blokAlim + userInvestmentBlocks + cüzdanBlokAlim;
+        if (toplam + arti >= toplamHisse) {
+            const neededBlok = toplamHisse - toplam;
+            let finalInnerBlocks = 0;
+            let finalKiraBlocks = 0;
+            let finalUserBlocks = 0;
+            let finalWalletBlocks = 0;
+            let remainingNeeded = neededBlok;
+            const innerToUse = Math.min(inner, remainingNeeded);
+            finalInnerBlocks = innerToUse;
+            remainingNeeded -= innerToUse;
+            if (remainingNeeded > 0) {
+                const kiraToUse = Math.min(blokAlim, remainingNeeded);
+                finalKiraBlocks = kiraToUse;
+                remainingNeeded -= kiraToUse;
+            }
+            if (remainingNeeded > 0) {
+                const userToUse = Math.min(userInvestmentBlocks, remainingNeeded);
+                finalUserBlocks = userToUse;
+                remainingNeeded -= userToUse;
+            }
+            if (remainingNeeded > 0) {
+                const walletToUse = Math.min(cüzdanBlokAlim, remainingNeeded);
+                finalWalletBlocks = walletToUse;
+                remainingNeeded -= walletToUse;
+            }
+            cuzdanBirikim += (cüzdanBlokAlim - finalWalletBlocks) * HISSE_USD;
+            toplam += neededBlok;
+            innerToplam += finalInnerBlocks;
+            kiraToplam += finalKiraBlocks;
+            totalUserContributionBlocks += finalUserBlocks;
+            document.getElementById('final-summary').style.display = 'block';
+            document.getElementById('final-inner-blocks').textContent = finalInnerBlocks;
+            document.getElementById('final-rent-blocks').textContent = finalKiraBlocks;
+            document.getElementById('final-user-blocks').textContent = finalUserBlocks;
+            document.getElementById('final-wallet-blocks').textContent = finalWalletBlocks;
+            document.getElementById('final-total-increase').textContent = neededBlok;
+            document.getElementById('final-wallet-cash').textContent = `$${cuzdanBirikim.toFixed(2)}`;
+            if(duzenli) duzenliUsd += finalUserBlocks * HISSE_USD;
+            else duzensizUsd += finalUserBlocks * HISSE_USD;
+            let tr=document.createElement('tr');
+            tr.innerHTML=`<td>${yil}</td><td>${yilBasiBlok}</td><td>${neededBlok}</td><td>${toplam}</td><td>$${rentToUse.toFixed(2)}</td><td>$${cuzdanBirikim.toFixed(2)}</td>`;
+            tbody.appendChild(tr);
+            y100 = yil;
+            y100Kira = `${blokAlim} blok + $${remainingRentCash.toFixed(2)}`;
+            break;
+        }
+        toplam += arti;
+        innerToplam += inner;
+        kiraToplam += blokAlim;
+        totalUserContributionBlocks += userInvestmentBlocks;
+        if(duzenli) duzenliUsd += userInvestmentBlocks * HISSE_USD;
+        else duzensizUsd += userInvestmentBlocks * HISSE_USD;
+        topluUsd += toplu * HISSE_USD;
+        if (y25 === yil) { y25Kira = `${blokAlim} blok + $${remainingRentCash.toFixed(2)}`; }
+        if (y50 === yil) { y50Kira = `${blokAlim} blok + $${remainingRentCash.toFixed(2)}`; }
+        if (y75 === yil) { y75Kira = `${blokAlim} blok + $${remainingRentCash.toFixed(2)}`; }
+        let tr=document.createElement('tr');
+        tr.innerHTML=`<td>${yil}</td><td>${yilBasiBlok}</td><td>${arti}</td><td>${toplam}</td><td>$${rentToUse.toFixed(2)}</td><td>$${cuzdanBirikim.toFixed(2)}</td>`;
+        tbody.appendChild(tr);
+    }
+    const innerPct = ((innerToplam / toplamHisse) * 100).toFixed(2);
+    const kiraPct = ((kiraToplam / toplamHisse) * 100).toFixed(2);
+    const toplamKatkiPct = (((innerToplam + kiraToplam) / toplamHisse) * 100).toFixed(2);
+    document.getElementById('y25').textContent=y25;
+    document.getElementById('y50').textContent=y50;
+    document.getElementById('y75').textContent=y75;
+    document.getElementById('y100').textContent=y100;
+    document.getElementById('y25Kira').textContent=y25Kira;
+    document.getElementById('y50Kira').textContent=y50Kira;
+    document.getElementById('y75Kira').textContent=y75Kira;
+    document.getElementById('y100Kira').textContent=y100Kira;
+    document.getElementById('innerPct').textContent=(innerPct + '%');
+    document.getElementById('innerBlok').textContent = innerToplam;
+    document.getElementById('kiraBlok').textContent = kiraToplam;
+    document.getElementById('kiraPct').textContent = (kiraPct + '%');
+    const baslik = document.getElementById('inner-katkisi-baslik');
+    baslik.textContent = `Inner Katkısı / %${toplamKatkiPct}`;
+    baslik.style.color = '#FF5252';
+    document.getElementById('duzenliUsd').textContent = `$${(duzenliUsd).toFixed(2)}`;
+    document.getElementById('duzensizUsd').textContent = `$${(duzensizUsd).toFixed(2)}`;
+    document.getElementById('topluUsd').textContent = `$${(topluUsd).toFixed(2)}`;
+    document.getElementById('toplamUsd').textContent = `$${(duzenliUsd + duzensizUsd + topluUsd).toFixed(2)}`;
+}
+window.onload = hesaplaShareStack;
 
-    // QR kodu resıme dönüştür.HTML script
-    let qrCanvas;
-
-    function generateQRCode() {
-      const link = document.getElementById("link-input").value;
-      const qrcodeDiv = document.getElementById("qrcode");
-      qrcodeDiv.innerHTML = "";
-
-      if (link.trim() === "") {
-        qrcodeDiv.innerHTML = "<p style='color:red;'>Lütfen bir link giriniz.</p>";
-        document.getElementById("download-btn").style.display = "none";
+// Inner Society Kazanç Tablosu - Script
+function hesaplaKazanc() {
+    const giris = parseInt(document.getElementById("inputValue").value);
+    if (isNaN(giris) || giris <= 0) {
+        alert("Lütfen geçerli ve pozitif bir sayı giriniz.");
+        document.getElementById("result-sections").style.display = "none";
         return;
-      }
-      
-      const qr = new QRCode(qrcodeDiv, {
+    }
+    document.getElementById("result-sections").style.display = "block";
+    document.getElementById("nakit").style.display = "block";
+    document.getElementById("krediler").style.display = "block";
+    document.getElementById("airdrop").style.display = "block";
+    document.getElementById("griBlok").style.display = "block";
+    const carp = [1, 2, 4, 8, 16, 32, 64];
+    let toplamKisi = 0;
+    carp.forEach(c => toplamKisi += giris * c);
+    const nakitHam = toplamKisi * 1.25;
+    const nakit = Math.min(nakitHam, 5000);
+    const krediHam = toplamKisi * 1.25;
+    const krediLimit = 5000;
+    const yesilKredi = Math.min(krediHam, krediLimit);
+    const kirmiziKredi = Math.min(krediHam, krediLimit);
+    const airdropNakit = Math.min(nakit / 4, 1250);
+    const airdropKredi = Math.min(nakit / 4, 1250);
+    const airdropGri = Math.min(nakit / 4, 1250);
+    const airdropSpar = Math.min(nakit / 4, 1250);
+    const airdropToplam = airdropNakit + airdropKredi + airdropGri + airdropSpar;
+    const airdropGriBlokSayisi = Math.floor(airdropGri / 50);
+    const griBlokSayisi = Math.floor(nakit / 100);
+    const devredenTutar = (nakit % 100).toFixed(2);
+    document.getElementById("nakit").innerHTML = `<div class="header"><i class="fas fa-money-bill-wave"></i> Nakit Geliri</div><div class="desc">Sisteme sağladığınız katkı oranına göre elde ettiğiniz yıllık nakit kazanç.<br><strong>Nakit Çekim Hakkı:</strong> Bu hak her yıl azalarak devam eder ve <span class="highlight">2031 yılında tamamen kalkar.</span></div><p>Hesaplanan Nakit: <span class="highlight">${nakit.toFixed(2)} USD</span></p>`;
+    document.getElementById("krediler").innerHTML = `<div class="header"><i class="fas fa-credit-card"></i> Kredi Bilgisi</div><div class="desc">Yıl boyunca kullanabileceğiniz iki tür kredi; katkınıza göre otomatik olarak oluşur. Her biri için <span class="highlight">üst limit 5000 USD'dir.</span><br><strong>Airdrop Karşılığı:</strong> Airdrop Kredi kazanımı, Yeşil Kredi dolana kadar katkı sağlar.</div><p>Yeşil Kredi: <span class="highlight">${yesilKredi.toFixed(2)} USD</span></p><p>Kırmızı Kredi: <span class="highlight">${kirmiziKredi.toFixed(2)} USD</span></p>`;
+    document.getElementById("airdrop").innerHTML = `<div class="header"><i class="fas fa-gift"></i> Airdrop Dağılımı</div><div class="desc">Nakit gelirinizin %25'i oranında hesaplanır ve her bir kategori için <span class="highlight">maksimum 1250 USD</span> olabilir. Toplam Airdrop limiti 5000 USD'dir.</div><ul><li><strong>1. Nakit Airdrop:</strong> Ömür boyu nakit çekim hakkı sağlar.<br>Kazanım: <span class="highlight">${airdropNakit.toFixed(2)} USD</span></li><li><strong>2. Kredi Airdrop:</strong> Yeşil kredi limitine ulaşana kadar verilir, ardından <span class="highlight">SPAR'a dönüşür.</span><br>Kazanım: <span class="highlight">${airdropKredi.toFixed(2)} USD</span></li><li><strong>3. Gri Airdrop:</strong> Ömür boyu kazanılır, her <span class="highlight">50 USD</span> karşılığı 1 Gri Blok değerindedir.<br>Kazanım: <span class="highlight">${airdropGri.toFixed(2)} USD</span><br>Kazanılan Gri Blok: <span class="highlight">${airdropGriBlokSayisi} Adet</span></li><li><strong>4. SPAR Airdrop:</strong> Esnaf indirimlerinde kullanılmak üzere biriktirilir. Sistem açıldığında aktif hale gelir.<br>Kazanım: <span class="highlight">${airdropSpar.toFixed(2)} USD</span></li></ul><p style="margin-top: 20px;"><strong>Toplam Airdrop Kazancınız:</strong> <span class="highlight">${airdropToplam.toFixed(2)} USD</span></p>`;
+    document.getElementById("griBlok").innerHTML = `<div class="header"><i class="fas fa-cubes"></i> Gri Blok Durumu</div><div class="desc">Her <span class="highlight">100 dolarlık</span> nakit gelir için bir Gri Blok kazanırsınız. Kalan miktar bir sonraki yıla devredilir.<br><strong>Ek Kazanç (Airdrop karşılığı):</strong> Gri Bloklar, Airdrop kapsamında ömür boyu kazanılır ve her <span class="highlight">50 USD</span> Airdrop Gri karşılığında 1 blok olarak tanımlanır.</div><p>Gri Blok Sayısı: <span class="highlight">${griBlokSayisi} Adet</span></p><p>Devreden Tutar: <span class="highlight">${devredenTutar} USD</span></p>`;
+}
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById("result-sections").style.display = "none";
+});
+
+// Inner Society QR Generator - Script
+function generateQRCode() {
+    const link = document.getElementById("link-input").value;
+    const qrcodeDiv = document.getElementById("qrcode");
+    const downloadLink = document.getElementById("download-link");
+    if (link.trim() === "") {
+        alert("Lütfen geçerli bir link giriniz.");
+        return;
+    }
+    qrcodeDiv.innerHTML = "";
+    const qr = new QRCode(qrcodeDiv, {
         text: link,
-        width: 128,
-        height: 128
-      });
-
-      setTimeout(() => {
-        qrCanvas = qrcodeDiv.querySelector("canvas");
-        document.getElementById("download-btn").style.display = "inline-block";
-      }, 500);
-    }
-
-    function downloadQRCode() {
-      if (!qrCanvas) return;
-      const link = document.createElement("a");
-      link.href = qrCanvas.toDataURL("image/png");
-      link.download = "innersociety_qr.png";
-      link.click();
-    }
-  </script>
+        width: 150,
+        height: 150,
+        colorDark : "#FFD700",
+        colorLight : "#1F2937",
+        correctLevel : QRCode.CorrectLevel.H
+    });
+    setTimeout(() => {
+        const qrImg = qrcodeDiv.querySelector("img");
+        if (qrImg && qrImg.src) {
+            downloadLink.href = qrImg.src;
+            downloadLink.style.display = "inline-block";
+        }
+    }, 500);
+}
+</script>
 </body>
 </html>
